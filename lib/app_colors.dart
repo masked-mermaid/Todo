@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 class LgT{
   static const background= Color.fromARGB(255, 233, 245, 255);
   static const appbar= Color(0xFF84CDFB);
-  static const bannerbg= Color(0xFFF6F6F6);
+  static const bannerbg= Color(0xEEF6F6F6);
   static const txt= Color(0xFF000000);
   static const chkbox= Color(0xFFEEEEEE);
 }

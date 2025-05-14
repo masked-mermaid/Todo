@@ -44,7 +44,7 @@ Widget createTask( String taskName){
       height: screenSize.height*.1,
       width: screenSize.width*0.9,
       decoration: BoxDecoration(
-      color: LgT.background,
+      color: LgT.bannerbg,
       borderRadius: BorderRadius.all(Radius.circular(10)),
       boxShadow: [
         BoxShadow(
@@ -78,9 +78,9 @@ Widget createTask( String taskName){
             ),
             textAlign:TextAlign.center,
              
-
+  
           )
-
+  
         ],
       ),
     ),
