@@ -15,6 +15,7 @@ class _AddTaskState extends State<AddTask> {
       backgroundColor: LgT.background,
       appBar: AppBar(backgroundColor: LgT.appbar,
       title: Title(color: Colors.black, child: Text('addtask')),),
+      body: TextField(),
     );
   }
 }
