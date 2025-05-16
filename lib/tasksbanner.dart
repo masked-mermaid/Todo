@@ -19,6 +19,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
     return Scaffold(
       backgroundColor: LgT.background,
       floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (_)=>AddTask()));
         }),

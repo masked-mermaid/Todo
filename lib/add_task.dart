@@ -12,6 +12,7 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: LgT.background,
       appBar: AppBar(backgroundColor: LgT.appbar,
       title: Title(color: Colors.black, child: Text('addtask')),),
     );
