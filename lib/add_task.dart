@@ -9,10 +9,15 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay selectedTime= TimeOfDay.now();
+                              bool selectTime= false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false ,
+
       home: Scaffold(
         
         appBar: AppBar(title: Text('New Task'),
@@ -56,25 +61,55 @@ class _AddTaskState extends State<AddTask> {
                       decoration: InputDecoration(
                         suffixIcon: Icon(Icons.date_range),
                         label: Text('enter date'),
-                        hintText: 'Date not set',
+                        hintText: '${selectedDate.year}/${selectedDate.month}/${selectedDate.day}',
+                        
                       ),
                       onTap:
-                          () => showDatePicker(
+                          () async{
+                            DateTime? date = await showDatePicker(
                             context: context,
                             firstDate: DateTime.now(),
                             lastDate: DateTime(2100),
-                          ),
+                          );
+                          if (date!=null){
+                            setState(() {
+                              selectedDate=date;
+                              print('date today is $selectedDate');
+                              selectTime= true;
+                            });
+                          }}
                     ),
                   ),
+                  Visibility(
+                    visible: selectTime,
+                    child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextFormField(
+                      controller: TextEditingController(),
+                      readOnly: true,
 
-                  ElevatedButton(
-                    onPressed:
-                        () => showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        ),
-                    child: Text('pick time'),
-                  ),
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.watch_later_outlined),
+                        label: Text('select time'),
+                        hintText: '${selectedTime.hour}:${selectedTime.minute}',
+                        
+                      ),
+                      onTap:
+                          () async{
+                            TimeOfDay? time= await showTimePicker(
+                            context: context,
+                           initialTime: TimeOfDay.now()
+                          );
+                          if (time!=null){
+                            setState(() {
+                              selectedTime=time;
+                              print('date today is $time');
+                            });
+                          }}
+                    ),
+                  ),),
+
+                 
                 ],
               ),
             ),
@@ -88,14 +123,4 @@ class _AddTaskState extends State<AddTask> {
     );
   }
 
-  Widget pickDate() {
-    return DatePickerDialog(
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2027),
-    );
-  }
-
-  Widget picktime() {
-    return TimePickerDialog(initialTime: TimeOfDay.now());
-  }
 }
