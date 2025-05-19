@@ -14,6 +14,11 @@ class _AddTaskState extends State<AddTask> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        
+        appBar: AppBar(title: Text('New Task'),
+        backgroundColor: LgT.appbar,
+       
+        ),
         backgroundColor: LgT.background,
         body: SafeArea(
           child: Center(
