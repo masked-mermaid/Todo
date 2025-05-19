@@ -21,7 +21,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_)=>MyForm()));
+          Navigator.push(context, MaterialPageRoute(builder: (_)=>(AddTask())));
         }),
 
       body: ListView(
@@ -68,7 +68,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
               },
             ),
             Text(
-              '$taskName',
+              taskName,
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w400,
