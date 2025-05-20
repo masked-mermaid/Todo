@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'package:intl/intl.dart';
 
 class AddTask extends StatefulWidget {
   const AddTask({super.key});
@@ -8,21 +9,23 @@ class AddTask extends StatefulWidget {
   State<AddTask> createState() => _AddTaskState();
 }
 
+
+
 class _AddTaskState extends State<AddTask> {
-  DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime= TimeOfDay.now();
-                              bool selectTime= false;
+  DateTime? selectedDate = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
+  TextEditingController task = TextEditingController();
+  TextEditingController datecontroller = TextEditingController();
+  TextEditingController timecontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false ,
-
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        
-        appBar: AppBar(title: Text('New Task'),
-        backgroundColor: LgT.appbar,
-       
+        appBar: AppBar(
+          title: Text('New Task'),
+          backgroundColor: LgT.appbar,
         ),
         backgroundColor: LgT.background,
         body: SafeArea(
@@ -38,6 +41,8 @@ class _AddTaskState extends State<AddTask> {
                     style: TextStyle(color: LgT.txt, fontSize: 24),
                   ),
                   TextField(
+                    maxLength: 30,
+                    controller: task,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(24),
                       label: Text(
@@ -46,70 +51,59 @@ class _AddTaskState extends State<AddTask> {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
-
-                        // labelStyle: TextStyle(color: LgT.txt, fontSize: 24),
                       ),
                     ),
                   ),
-                  
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextFormField(
-                      controller: TextEditingController(),
+                      controller: datecontroller,
                       readOnly: true,
-
                       decoration: InputDecoration(
                         suffixIcon: Icon(Icons.date_range),
                         label: Text('enter date'),
-                        hintText: '${selectedDate.year}/${selectedDate.month}/${selectedDate.day}',
-                        
                       ),
-                      onTap:
-                          () async{
-                            DateTime? date = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime(2100),
-                          );
-                          if (date!=null){
-                            setState(() {
-                              selectedDate=date;
-                              print('date today is $selectedDate');
-                              selectTime= true;
-                            });
-                          }}
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate ?? DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2100),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            selectedDate = pickedDate;
+                            datecontroller.text = DateFormat('yyyy-MM-dd').format(selectedDate!);
+                            print('date today is $selectedDate');
+                          });
+                        }
+                      },
                     ),
                   ),
-                  Visibility(
-                    visible: selectTime,
-                    child: Padding(
+                  Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextFormField(
-                      controller: TextEditingController(),
+                      controller: timecontroller,
                       readOnly: true,
-
                       decoration: InputDecoration(
                         suffixIcon: Icon(Icons.watch_later_outlined),
                         label: Text('select time'),
-                        hintText: '${selectedTime.hour}:${selectedTime.minute}',
-                        
                       ),
-                      onTap:
-                          () async{
-                            TimeOfDay? time= await showTimePicker(
-                            context: context,
-                           initialTime: TimeOfDay.now()
-                          );
-                          if (time!=null){
-                            setState(() {
-                              selectedTime=time;
-                              print('date today is $time');
-                            });
-                          }}
+                      onTap: () async {
+                        TimeOfDay? pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (pickedTime != null) {
+                          setState(() {
+                            selectedTime = pickedTime;
+                            timecontroller.text = selectedTime.format(context);
+                            print('date today is $pickedTime');
+                          });
+                        }
+                      },
                     ),
-                  ),),
-
-                 
+                  ),
                 ],
               ),
             ),
@@ -117,10 +111,11 @@ class _AddTaskState extends State<AddTask> {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.done),
-          onPressed: () {},
+          onPressed: () {
+            print('the task is' + task.text);
+          },
         ),
       ),
     );
   }
-
 }
