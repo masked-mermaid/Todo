@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/add_task.dart';
+import 'package:todo_app/taskmodels.dart';
 import 'app_colors.dart';
 
 
@@ -12,7 +13,8 @@ class ToDoScreen extends StatefulWidget {
 }
 
 class _ToDoScreenState extends State<ToDoScreen> {
-  bool? ischecked = true;
+  // bool? ischecked = false;
+  List<Task>tasklist=[];
 
   @override
   Widget build(BuildContext context) {
@@ -20,19 +22,27 @@ class _ToDoScreenState extends State<ToDoScreen> {
       backgroundColor: LgT.background,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_)=>(AddTask())));
+        onPressed: () async{
+          final newTask = await Navigator.push(context, MaterialPageRoute(builder: (_)=>AddTask()));
+          if (newTask!=null){
+            setState(() {
+              tasklist.add(newTask);
+            });
+          }
+         
         }),
 
-      body: ListView(
-        children: [
-          createTask('Do laundry'),
-          createTask("Do pushup")],
-      ),
+      body: tasklist.isEmpty? Center(child: Text('You have no task for now!'),)
+      :ListView.builder(
+        itemCount: tasklist.length,
+        itemBuilder: (BuildContext context, int index){
+          final task = tasklist[index];
+          return createTask(task, index);
+        })      ,
     );
   }
 
-  Widget createTask(String taskName) {
+  Widget createTask(Task task, int index) {
     var screenSize = MediaQuery.of(context).size;
 
     return Center(
@@ -60,15 +70,15 @@ class _ToDoScreenState extends State<ToDoScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Checkbox(
-              value: ischecked,
+              value: task.isCompleted,
               onChanged: (newBool) {
                 setState(() {
-                  ischecked = newBool;
+                  tasklist[index].isCompleted=newBool!;
                 });
               },
             ),
             Text(
-              taskName,
+              task.title,
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w400,

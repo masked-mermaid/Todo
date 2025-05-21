@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/taskmodels.dart';
 import 'app_colors.dart';
 import 'package:intl/intl.dart';
 
@@ -9,24 +10,18 @@ class AddTask extends StatefulWidget {
   State<AddTask> createState() => _AddTaskState();
 }
 
-
-
 class _AddTaskState extends State<AddTask> {
   DateTime? selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   TextEditingController task = TextEditingController();
   TextEditingController datecontroller = TextEditingController();
   TextEditingController timecontroller = TextEditingController();
+  List<Task> tasks = [];
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('New Task'),
-          backgroundColor: LgT.appbar,
-        ),
+    return  Scaffold(
+        appBar: AppBar(title: Text('New Task'), backgroundColor: LgT.appbar),
         backgroundColor: LgT.background,
         body: SafeArea(
           child: Center(
@@ -73,8 +68,10 @@ class _AddTaskState extends State<AddTask> {
                         if (pickedDate != null) {
                           setState(() {
                             selectedDate = pickedDate;
-                            datecontroller.text = DateFormat('yyyy-MM-dd').format(selectedDate!);
-                            print('date today is $selectedDate');
+                            datecontroller.text = DateFormat(
+                              'yyyy-MM-dd',
+                            ).format(selectedDate!);
+                            // print('date today is $selectedDate');
                           });
                         }
                       },
@@ -98,7 +95,7 @@ class _AddTaskState extends State<AddTask> {
                           setState(() {
                             selectedTime = pickedTime;
                             timecontroller.text = selectedTime.format(context);
-                            print('date today is $pickedTime');
+                            // print('date today is $pickedTime');
                           });
                         }
                       },
@@ -112,10 +109,33 @@ class _AddTaskState extends State<AddTask> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.done),
           onPressed: () {
-            print('the task is' + task.text);
+            // print('task text ='+task.text);
+            if (task.text.isEmpty ) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('please enter a task name')),
+              );
+              return;
+            }
+            // combine date and time into one
+            final fullDateTime = DateTime(
+              selectedDate!.year,
+              selectedDate!.month,
+              selectedDate!.day,
+              selectedTime.hour,
+              selectedTime.minute,
+            );
+            // ad to task lilst
+            final newTask = Task(title: task.text.trim(), dateTime: fullDateTime, isCompleted: false);
+            // Optional: Clear fields after adding
+            task.clear();
+            datecontroller.clear();
+            timecontroller.clear();
+            selectedDate = DateTime.now();
+            selectedTime = TimeOfDay.now();
+            Navigator.pop(context,newTask);
           },
         ),
-      ),
-    );
+      );
+    
   }
 }

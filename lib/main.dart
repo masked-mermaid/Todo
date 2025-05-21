@@ -10,7 +10,6 @@ class ToDo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool? ischecked = false;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
