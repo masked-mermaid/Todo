@@ -56,7 +56,7 @@ class _AddTaskState extends State<AddTask> {
                       readOnly: true,
                       decoration: InputDecoration(
                         suffixIcon: Icon(Icons.date_range),
-                        label: Text('enter date'),
+                        label: Text('Due date'),
                       ),
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
