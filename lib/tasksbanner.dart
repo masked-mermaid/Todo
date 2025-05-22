@@ -21,6 +21,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
     return Scaffold(
       backgroundColor: LgT.background,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: LgT.btn,
         child: Icon(Icons.add),
         onPressed: () async{
           final newTask = await Navigator.push(context, MaterialPageRoute(builder: (_)=>AddTask()));
@@ -55,14 +56,14 @@ class _ToDoScreenState extends State<ToDoScreen> {
           borderRadius: BorderRadius.all(Radius.circular(8)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black,
-              offset: Offset(4,4),
-              blurRadius: 10,
+              color: const Color.fromARGB(255, 126, 126, 126),
+              offset: Offset(3,3),
+              blurRadius: 8,
             ),
             BoxShadow(
               color: Colors.white,
               offset: Offset(-3, -3),
-              blurRadius: 10,
+              blurRadius: 8
             ),
           ],
         ),

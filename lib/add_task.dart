@@ -107,6 +107,7 @@ class _AddTaskState extends State<AddTask> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: LgT.btn,
           child: Icon(Icons.done),
           onPressed: () {
             // print('task text ='+task.text);
