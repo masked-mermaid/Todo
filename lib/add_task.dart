@@ -25,8 +25,7 @@ class _AddTaskState extends State<AddTask> {
         backgroundColor: LgT.background,
         body: SafeArea(
           child: Center(
-            child: Container(
-              color: LgT.background,
+            child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.8,
               width: MediaQuery.of(context).size.width * 0.9,
               child: ListView(
@@ -126,7 +125,10 @@ class _AddTaskState extends State<AddTask> {
               selectedTime.minute,
             );
             // ad to task lilst
-            final newTask = Task(title: task.text.trim(), dateTime: fullDateTime, isCompleted: false);
+            final newTask = Task(
+              title: task.text.trim(),
+              dateTime: fullDateTime,
+               isCompleted: false);
             // Optional: Clear fields after adding
             task.clear();
             datecontroller.clear();
