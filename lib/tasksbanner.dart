@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/add_task.dart';
 import 'package:todo_app/taskmodels.dart';
-import 'app_colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ToDoScreen extends StatefulWidget {
   const ToDoScreen({super.key});
@@ -14,36 +13,46 @@ class ToDoScreen extends StatefulWidget {
 
 class _ToDoScreenState extends State<ToDoScreen> {
   // bool? ischecked = false;
-  List<Task> tasklist = [];
+  // List<Task> tasklist = [];
+  late Box<Task> _taskBox;
+  @override
+  void initState() {
+    super.initState();
+    _taskBox = Hive.box('TaskBox');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: LgT.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: LgT.btn,
-        child: Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        child: Icon(Icons.add,
+        color: Colors.black,),
         onPressed: () async {
           final newTask = await Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => AddTask()),
           );
           if (newTask != null) {
-            setState(() {
-              tasklist.add(newTask);
-            });
+            _taskBox.add(newTask);
           }
         },
       ),
 
-      body:
-          tasklist.isEmpty
+      body: ValueListenableBuilder<Box<Task>>(
+        valueListenable: _taskBox.listenable(),
+        builder: (context, box, _) {
+          final tasks = box.values.toList();
+          return tasks.isEmpty
               ? Center(child: Text('You have no task for now!'))
               : ListView.builder(
-                itemCount: tasklist.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final task = tasklist[index];
-                  return createTask(task, index);
-                },
+                  itemCount: tasks.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final task = tasks[index];
+                    return createTask(task, index);
+                  },
+                );
+        },
               ),
      
     );
@@ -58,20 +67,33 @@ class _ToDoScreenState extends State<ToDoScreen> {
         height: screenSize.height * .08,
         width: screenSize.width * 0.9,
         decoration: BoxDecoration(
-          color: LgT.background,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.all(Radius.circular(8)),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(255, 126, 126, 126),
-              offset: Offset(3, 3),
-              blurRadius: 8,
-            ),
-            BoxShadow(
-              color: Colors.white,
-              offset: Offset(-3, -3),
-              blurRadius: 8,
-            ),
-          ],
+          boxShadow: Theme.of(context).brightness == Brightness.light
+              ? [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 126, 126, 126),
+                    offset: Offset(3, 3),
+                    blurRadius: 8,
+                  ),
+                  BoxShadow(
+                    color: Colors.white,
+                    offset: Offset(-3, -3),
+                    blurRadius: 8,
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 48, 48, 48),
+                    offset: Offset(-3,-3),
+                    blurRadius: 2,
+                  ),
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 5, 5, 5),
+                    offset: Offset(3, 3),
+                    blurRadius: 5,
+                  ),
+                ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -80,7 +102,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
               value: task.isCompleted,
               onChanged: (newBool) {
                 setState(() {
-                  tasklist[index].isCompleted = newBool!;
+                  task.isCompleted = newBool!;
+                  _taskBox.putAt(index, task);
                 });
               },
             ),
@@ -89,7 +112,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w400,
-                color: LgT.txt,
+
               ),
               textAlign: TextAlign.center,
             ),

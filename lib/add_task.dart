@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/taskmodels.dart';
-import 'app_colors.dart';
 import 'package:intl/intl.dart';
 
 class AddTask extends StatefulWidget {
@@ -21,8 +20,8 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-        appBar: AppBar(title: Text('New Task'), backgroundColor: LgT.appbar),
-        backgroundColor: LgT.background,
+        appBar: AppBar(title: Text('New Task'), backgroundColor:Theme.of(context).colorScheme.primary),
+        // backgroundColor: LgT.background,
         body: SafeArea(
           child: Center(
             child: SizedBox(
@@ -32,7 +31,7 @@ class _AddTaskState extends State<AddTask> {
                 children: [
                   Text(
                     'What do you want to do today?',
-                    style: TextStyle(color: LgT.txt, fontSize: 24),
+                    style: TextStyle( fontSize: 24),
                   ),
                   TextField(
                     maxLength: 30,
@@ -41,7 +40,7 @@ class _AddTaskState extends State<AddTask> {
                       contentPadding: EdgeInsets.all(24),
                       label: Text(
                         'enter task',
-                        style: TextStyle(color: LgT.txt),
+                       
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -106,8 +105,9 @@ class _AddTaskState extends State<AddTask> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: LgT.btn,
-          child: Icon(Icons.done),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          child: Icon(Icons.done,
+          color: Colors.black,),
           onPressed: () {
             // print('task text ='+task.text);
             if (task.text.isEmpty ) {
