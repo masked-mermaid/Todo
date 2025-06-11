@@ -1,3 +1,3 @@
 ## WIP
-a practice TODO app with simple UI elements
+this app is currently work in progess, the release willl be available once the alpha version is ready
 
