@@ -12,22 +12,24 @@ class ToDoScreen extends StatefulWidget {
 }
 
 class _ToDoScreenState extends State<ToDoScreen> {
-  // bool? ischecked = false;
-  // List<Task> tasklist = [];
   late Box<Task> _taskBox;
+
   @override
   void initState() {
     super.initState();
     _taskBox = Hive.box('TaskBox');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        child: Icon(Icons.add,
-        color: Colors.black,),
+        child: Icon(
+          Icons.add,
+          color: Colors.black,
+        ),
         onPressed: () async {
           final newTask = await Navigator.push(
             context,
@@ -38,7 +40,6 @@ class _ToDoScreenState extends State<ToDoScreen> {
           }
         },
       ),
-
       body: ValueListenableBuilder<Box<Task>>(
         valueListenable: _taskBox.listenable(),
         builder: (context, box, _) {
@@ -49,34 +50,53 @@ class _ToDoScreenState extends State<ToDoScreen> {
                   itemCount: tasks.length,
                   itemBuilder: (BuildContext context, int index) {
                     final task = tasks[index];
-                    return createTask(task, index);
+                    // Pass the actual key from Hive for better practice
+                    // If you don't have a unique ID in Task, you can use index too,
+                    // but keyAt(index) is more robust for Hive.
+                    return createTask(task, index, box.keyAt(index));
                   },
                 );
         },
-              ),
-     
+      ),
     );
   }
 
-  Widget createTask(Task task, int index) {
+  // Modified createTask to accept the Hive key as well
+  Widget createTask(Task task, int index, dynamic hiveKey) {
     var screenSize = MediaQuery.of(context).size;
 
     return Center(
       child: Dismissible(
-        key: Key(task.title),
+        // Use a ValueKey with the Hive key for a truly unique and robust key.
+        // This is crucial for Dismissible to work correctly, especially when items are reordered or deleted.
+        key: ValueKey(hiveKey),
         direction: DismissDirection.endToStart,
         onDismissed: (direction) {
-          _taskBox.delete(index);
+          final Task dismissedTask = task; // Store the task itself
+          final int dismissedIndex = index; // Store the original index
+          final dynamic dismissedKey = hiveKey; // Store the original Hive key
+
+          // Immediately delete from the Hive box.
+          // The ValueListenableBuilder will then automatically rebuild the ListView,
+          // removing the item from the UI. You don't need a `setState` here
+          // directly affecting a local list, because Hive's listenable handles it.
+          _taskBox.delete(dismissedKey); // Use the key for deletion
+
           ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            duration: Duration(seconds: 5),
-            content: Text('Deleted task'),
-            action: SnackBarAction(label: 'UNDO',
-            
-            onPressed: () {
-              _taskBox.put(index, task);
-            },),
-          ));
+            SnackBar(
+              duration: Duration(seconds: 5),
+              content: Text('Deleted task "${dismissedTask.title}"'), // Show which task was deleted
+              action: SnackBarAction(
+                label: 'UNDO',
+                onPressed: () {
+                  // When UNDO is pressed, put the task back into the box
+                  // at its original key. This will also trigger the ValueListenableBuilder
+                  // to rebuild and show the task again.
+                  _taskBox.put(dismissedKey, dismissedTask);
+                },
+              ),
+            ),
+          );
         },
         child: Container(
           margin: EdgeInsets.only(top: 30),
@@ -101,7 +121,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
                 : [
                     BoxShadow(
                       color: const Color.fromARGB(255, 48, 48, 48),
-                      offset: Offset(-3,-3),
+                      offset: Offset(-3, -3),
                       blurRadius: 2,
                     ),
                     BoxShadow(
@@ -119,7 +139,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
                 onChanged: (newBool) {
                   setState(() {
                     task.isCompleted = newBool!;
-                    _taskBox.putAt(index, task);
+                    // When updating, put using the Hive key
+                    _taskBox.put(hiveKey, task);
                   });
                 },
               ),
@@ -128,7 +149,6 @@ class _ToDoScreenState extends State<ToDoScreen> {
                 style: GoogleFonts.poppins(
                   fontSize: 22,
                   fontWeight: FontWeight.w400,
-        
                 ),
                 textAlign: TextAlign.center,
               ),
