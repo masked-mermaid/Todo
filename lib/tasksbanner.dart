@@ -62,62 +62,79 @@ class _ToDoScreenState extends State<ToDoScreen> {
     var screenSize = MediaQuery.of(context).size;
 
     return Center(
-      child: Container(
-        margin: EdgeInsets.only(top: 30),
-        height: screenSize.height * .08,
-        width: screenSize.width * 0.9,
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          boxShadow: Theme.of(context).brightness == Brightness.light
-              ? [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 126, 126, 126),
-                    offset: Offset(3, 3),
-                    blurRadius: 8,
-                  ),
-                  BoxShadow(
-                    color: Colors.white,
-                    offset: Offset(-3, -3),
-                    blurRadius: 8,
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 48, 48, 48),
-                    offset: Offset(-3,-3),
-                    blurRadius: 2,
-                  ),
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 5, 5, 5),
-                    offset: Offset(3, 3),
-                    blurRadius: 5,
-                  ),
-                ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              value: task.isCompleted,
-              onChanged: (newBool) {
-                setState(() {
-                  task.isCompleted = newBool!;
-                  _taskBox.putAt(index, task);
-                });
-              },
-            ),
-            Text(
-              task.title,
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.w400,
-
+      child: Dismissible(
+        key: Key(task.title),
+        direction: DismissDirection.endToStart,
+        onDismissed: (direction) {
+          _taskBox.delete(index);
+          ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: Duration(seconds: 5),
+            content: Text('Deleted task'),
+            action: SnackBarAction(label: 'UNDO',
+            
+            onPressed: () {
+              _taskBox.put(index, task);
+            },),
+          ));
+        },
+        child: Container(
+          margin: EdgeInsets.only(top: 30),
+          height: screenSize.height * .08,
+          width: screenSize.width * 0.9,
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            boxShadow: Theme.of(context).brightness == Brightness.light
+                ? [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 126, 126, 126),
+                      offset: Offset(3, 3),
+                      blurRadius: 8,
+                    ),
+                    BoxShadow(
+                      color: Colors.white,
+                      offset: Offset(-3, -3),
+                      blurRadius: 8,
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 48, 48, 48),
+                      offset: Offset(-3,-3),
+                      blurRadius: 2,
+                    ),
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 5, 5, 5),
+                      offset: Offset(3, 3),
+                      blurRadius: 5,
+                    ),
+                  ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Checkbox(
+                value: task.isCompleted,
+                onChanged: (newBool) {
+                  setState(() {
+                    task.isCompleted = newBool!;
+                    _taskBox.putAt(index, task);
+                  });
+                },
               ),
-              textAlign: TextAlign.center,
-            ),
-            Padding(padding: EdgeInsets.all(5), child: Text('$index')),
-          ],
+              Text(
+                task.title,
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+        
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Padding(padding: EdgeInsets.all(5), child: Text('$index')),
+            ],
+          ),
         ),
       ),
     );
